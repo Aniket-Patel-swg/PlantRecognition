@@ -60,6 +60,8 @@ const qrcode = () => {
       height: 240,
       width: 320,
     };
+
+    console.log(result)
   
     return (
       <div>
@@ -69,7 +71,7 @@ const qrcode = () => {
           onError={handleError}
           onScan={handleScan}
         />
-        <p>{result}</p>
+        <p><p>{JSON.stringify(result)}</p></p>
   
         {error && <p style={{ color: 'red' }}>{error}</p>}
   
