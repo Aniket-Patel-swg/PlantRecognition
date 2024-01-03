@@ -3,7 +3,7 @@
 // import { Html5QrcodeScanner } from "html5-qrcode";
 
 // const qrcode = () => {
-  
+
 //     const scanner = new Html5QrcodeScanner('reader',{
 //         qrbox:{
 //             width:250,
@@ -32,53 +32,68 @@ import dynamic from 'next/dynamic'; // Use dynamic import for client-side render
 const QrReader = dynamic(() => import('react-qr-scanner'), { ssr: false });
 
 const qrcode = () => {
-    const [delay, setDelay] = useState(100);
-    const [result, setResult] = useState('No result');
-    const [file, setFile] = useState(null);
-    const [error, setError] = useState(null);
-  
-    const handleScan = (data) => {
-      if (data) {
-        setResult(data);
-        setError(null); // Reset error state if scan is successful
-      }
-    };
-  
-    const handleError = (err) => {
-      console.log(err);
-      setError('Error scanning QR code. Please try again.');
-    };
-  
-    const handleFileChange = (e) => {
-      const selectedFile = e.target.files[0];
-      setFile(selectedFile);
-      console.log(selectedFile)
-      console.log('File changed')
-    };
-  
-    const previewStyle = {
-      height: 240,
-      width: 320,
-    };
+  const [delay, setDelay] = useState(100);
+  const [result, setResult] = useState('No result');
+  const [error, setError] = useState(null);
 
-    console.log(result)
-  
-    return (
-      <div>
-        <QrReader
-          delay={delay}
-          style={previewStyle}
-          onError={handleError}
-          onScan={handleScan}
-        />
-        <p><p>{JSON.stringify(result)}</p></p>
-  
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-  
-        <input type="file" onChange={handleFileChange} />
-        {file && <p>Selected File: {file.name}</p>}
-      </div>
-    );
+  const handleScan = (data) => {
+    if (data) {
+
+      setResult(data);
+      setError(null); // Reset error state if scan is successful
+    }
   };
+
+  const handleError = (err) => {
+    console.log(err);
+    setError('Error scanning QR code. Please try again.');
+  };
+
+
+  const previewStyle = {
+    height: 240,
+    width: 320,
+  };
+
+  const parsedResult = result.text ? JSON.parse(result.text) : {};
+
+  console.log("result: ", result.text)
+
+  return (
+    <div>
+      <h1>Scan your QR Here!</h1>
+      <QrReader
+        delay={delay}
+        style={previewStyle}
+        onError={handleError}
+        onScan={handleScan}
+      />
+      {/* <p><p>{JSON.stringify(result)}</p></p> */}
+
+      {result == "No result" ? 
+        <>
+          <p>No Result, Scan QR code</p>
+        </>:
+        <>
+          <h3>Name: </h3>
+       
+          <p>{parsedResult.Name}</p>   <br />
+          <h3>General Info:</h3>
+          
+          <p>{parsedResult.GeneralInfo}</p><br />
+          <h3>Medicinal Info: </h3>
+          
+          <p>{parsedResult.MedicinalInfo}</p><br />
+          <h3>Cultivation Info:</h3>
+         
+          <p>{parsedResult.CultivationInfo}</p> <br />
+        </>        
+      }
+
+
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+    </div>
+  );
+};
 
 export default qrcode;
